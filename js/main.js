@@ -57,6 +57,7 @@ fromAPI(listAllDogURL)
       let selectName = groupByAlphabetical()[listAphabet[i].textContent.charAt(0)];
       selectName.map(item => {
         let paragraph = document.createElement('p');
+
         paragraph.addEventListener("mouseover", mouseOver);
         paragraph.addEventListener("mouseout", mouseOut);
 
@@ -76,11 +77,11 @@ fromAPI(listAllDogURL)
       fetchPromise.then(response => response.json())
         .then(dataImage => {
 
-          let img = document.createElement('img')
+          let img = document.createElement('img');
           img.src = Object.values(dataImage)[0];
-          img.className = 'img img-thumbnail'
-          containImage[i].appendChild(img)
-        })
+          img.className = 'img img-thumbnail';
+          containImage[i].appendChild(img);
+        });
     }
 
     let i = -1;
@@ -103,6 +104,8 @@ fromAPI(listAllDogURL)
       this.style.fontSize = '16px';
       this.parentNode.style.overflowY = " hidden";
     }
+
+   
   });
 
 
