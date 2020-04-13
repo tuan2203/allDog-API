@@ -1,75 +1,64 @@
+
 let listAllDogURL = 'https://dog.ceo/api/breeds/list/all';
 
 const fromAPI = (URL) => fetch(URL).then(res => res.json());
-const coverToObject = (arr, cover) => cover(arr);
 
 fromAPI(listAllDogURL)
   .then(data => {
+    const allDogName = [];
+    const alphabet = [];
+    const groupName = [];
+    Object.keys(data.message).map(item => {
 
-    const groupByAlphabetical = () => coverToObject(data.message, Object.keys).sort() //nhóm A B C ...
-      .reduce((acc, cur) => {
+      allDogName.push(item)
+      !alphabet.includes(item.charAt(0)) ? alphabet.push(item.charAt(0)) : '';
+    });
 
-        !acc[cur.charAt(0).toUpperCase()] ? acc[cur.charAt(0).toUpperCase()] = [] : "";
-        acc[cur.charAt(0).toUpperCase()].push(cur);
+    let counter = 3;
+    alphabet.map((item, index) => {
 
-        return acc;
-      }, {});
+      if (index % 3 === 0) {
+        let divNodeRow1 = document.createElement('div');
+        divNodeRow1.className = 'row alphabet';
+        document.getElementById('listAlphabet').appendChild(divNodeRow1)
+        index > 0 && index % 3 === 0 ? counter++ : "";
+      }
+      let divNodeCol1 = document.createElement('div');
+      divNodeCol1.className = 'col border pl-4';
+      divNodeCol1.textContent = item.charAt(0).toUpperCase() + item.slice(1);
+      document.getElementsByClassName('alphabet')[counter - 3].appendChild(divNodeCol1)
 
-    let counter = 4;
+      let divNodeRow2 = document.createElement('div');
+      divNodeRow2.className = 'row containNameImage ';
+      divNodeCol1.appendChild(divNodeRow2);
 
-    coverToObject(groupByAlphabetical(), Object.keys)    //lấy A B C....coverToObject() được tạo hàng số 4 ,groupByAlphabetical() được tạo hàng số 9
-      .map((item, index) => {
+      let divNodeCo2 = document.createElement('div');
+      divNodeCo2.className = 'col-sm border-top border-right containName';
 
-        if (index % counter === 0) {
+      let divNodeCo3 = document.createElement('div');
+      divNodeCo3.className = 'col-sm border-top containImage';
 
-          let divNodeRow = document.createElement('div');
-          divNodeRow.className = `row rowList`;
-          document.getElementById('list').appendChild(divNodeRow);
-        };
-        index !== 0 && index % 4 === 0 ? counter++ : "";
-
-        let divNodeCol1 = document.createElement('div');
-        divNodeCol1.className = 'col-sm border listAphabet';
-
-        divNodeCol1.innerHTML = item;
-        document.getElementsByClassName('rowList')[counter - 4].appendChild(divNodeCol1);
-
-        let divNodeRow2 = document.createElement('div');
-        divNodeRow2.className = 'row';
-        divNodeCol1.appendChild(divNodeRow2);
-
-        let divNodeCo2 = document.createElement('div');
-        divNodeCo2.className = 'col-sm border-top border-right containName';
-
-        let divNodeCo3 = document.createElement('div');
-        divNodeCo3.className = 'col-sm border-top containImage';
-
-        divNodeRow2.appendChild(divNodeCo2);
-        divNodeRow2.appendChild(divNodeCo3);
-      });
-    //Add name to DOM 
-    let listAphabet = document.getElementsByClassName('listAphabet')
+      divNodeRow2.appendChild(divNodeCo2);
+      divNodeRow2.appendChild(divNodeCo3);
+    });
+    ///Add name to DOM 
     let containName = document.getElementsByClassName('containName');
-    // console.log(groupByAlphabetical()[listAphabet[0].textContent.charAt(0)]);
 
-    const allDogName = i => {
-
-      let selectName = groupByAlphabetical()[listAphabet[i].textContent.charAt(0)]; //groupByAlphabetical() được tạo hàng số 9
-      selectName.map(item => {
-        let paragraph = document.createElement('p');
-        paragraph.className = 'paragraph';
-        paragraph.textContent = item ? item.charAt(0).toUpperCase() + item.slice(1) : "";
-        containName[i].appendChild(paragraph)
+    const addDogName = i => {
+     
+      groupName[i].map(item => {
+        let paragraph = document.createElement('p')
+        paragraph.textContent = item.charAt(0).toUpperCase() + item.slice(1);
+        paragraph.className = 'paragraph'
+        containName[i].appendChild(paragraph);
       })
     }
-
-    //Add image to DOM
+    // //Add image to DOM
     let containImage = document.getElementsByClassName('containImage');
     const getImageRandom = i => {
 
-      let selectImage = groupByAlphabetical()[listAphabet[i].textContent.charAt(0)];
-      let numRandom = Math.floor(Math.random() * selectImage.length);
-      let fetchPromise = fetch(`https://dog.ceo/api/breed/${selectImage[numRandom]}/images/random`);
+      let numRandom = Math.floor(Math.random() * groupName[i].length);
+      let fetchPromise = fetch(`https://dog.ceo/api/breed/${groupName[i][numRandom]}/images/random`);
 
       fetchPromise.then(response => response.json())
         .then(dataImage => {
@@ -77,28 +66,32 @@ fromAPI(listAllDogURL)
           let img = document.createElement('img');
           img.src = Object.values(dataImage)[0];
           img.title = Object.values(dataImage)[0].slice(30).split('/')[0];
-          img.className = 'img img-thumbnail';
+          img.className = 'img p-0 m-auto img-fluid mh-100 ';
           containImage[i].appendChild(img);
         });
     };
-
+   
+    function isGroupName(i) {
+      return groupName.push(allDogName.reduce((acc, cur) => {
+        cur.charAt(0) === alphabet[i] ? acc.push(cur) : "";
+        return acc;
+      }, []));
+    }
     let i = -1;
-    while (i++ < containName.length - 1) {
+    while (i++ < alphabet.length - 1) {
 
-      allDogName(i); //thêm tên các giống dog allDogName(i) được tạo hàng 55
-      getImageRandom(i) //thêm ảnh các giống dog và chạy random mỗi khi load getImageRandom(i) được tạo hàng 68
-    };
-
+      isGroupName(i);
+      addDogName(i); // thêm tên vào DOM
+      getImageRandom(i) //Thêm ảnh vào DOM
+    }
     $('.paragraph').mouseover(function () {
+
       $(this).css({
-        
         'color': 'brown',
         'cursor': 'pointer',
         'font-size': '19px'
       });
-
-    $(this).parent().children().length > 6 ? $(this).parent().css({'overflow-y': "scroll"}) :'';
-      
+      $(this).parent().children().length > 6 ? $(this).parent().css({ 'overflow-y': "scroll" }) : '';
     }).mouseout(function () {
       $(this).css({
 
@@ -121,7 +114,9 @@ fromAPI(listAllDogURL)
         });
     });
 
+    
   });
+
 
 
 
