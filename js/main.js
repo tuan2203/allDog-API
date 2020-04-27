@@ -13,39 +13,42 @@ fromAPI(listAllDogURL)
       allDogName.push(item)
       !alphabet.includes(item.charAt(0)) ? alphabet.push(item.charAt(0)) : '';
     });
+    const createDOM = counter => {
+      counter === undefined ? counter = 3 : '';
+      alphabet.map((item, index) => {
 
-    let counter = 3;
-    alphabet.map((item, index) => {
+        if (index % 3 === 0) {
+          let divNodeRow1 = document.createElement('div');
+          divNodeRow1.className = 'row alphabet';
+          document.getElementById('listAlphabet').appendChild(divNodeRow1)
+          index > 0 && index % 3 === 0 ? counter++ : "";
+        }
 
-      if (index % 3 === 0) {
-        let divNodeRow1 = document.createElement('div');
-        divNodeRow1.className = 'row alphabet';
-        document.getElementById('listAlphabet').appendChild(divNodeRow1)
-        index > 0 && index % 3 === 0 ? counter++ : "";
-      }
-      let divNodeCol1 = document.createElement('div');
-      divNodeCol1.className = 'col border pl-4';
-      divNodeCol1.textContent = item.charAt(0).toUpperCase() + item.slice(1);
-      document.getElementsByClassName('alphabet')[counter - 3].appendChild(divNodeCol1)
+        let divNodeCol1 = document.createElement('div');
+        divNodeCol1.className = 'col border pl-4';
+        divNodeCol1.textContent = item.charAt(0).toUpperCase() + item.slice(1);
+        document.getElementsByClassName('alphabet')[counter - 3].appendChild(divNodeCol1)
 
-      let divNodeRow2 = document.createElement('div');
-      divNodeRow2.className = 'row containNameImage ';
-      divNodeCol1.appendChild(divNodeRow2);
+        let divNodeRow2 = document.createElement('div');
+        divNodeRow2.className = 'row containNameImage ';
+        divNodeCol1.appendChild(divNodeRow2);
 
-      let divNodeCo2 = document.createElement('div');
-      divNodeCo2.className = 'col-sm border-top border-right containName';
+        let divNodeCo2 = document.createElement('div');
+        divNodeCo2.className = 'col-sm border-top border-right containName';
 
-      let divNodeCo3 = document.createElement('div');
-      divNodeCo3.className = 'col-sm border-top containImage';
+        let divNodeCo3 = document.createElement('div');
+        divNodeCo3.className = 'col-sm border-top containImage';
 
-      divNodeRow2.appendChild(divNodeCo2);
-      divNodeRow2.appendChild(divNodeCo3);
-    });
+        divNodeRow2.appendChild(divNodeCo2);
+        divNodeRow2.appendChild(divNodeCo3);
+      });
+    }
+    createDOM();
     ///Add name to DOM 
     let containName = document.getElementsByClassName('containName');
 
     const addDogName = i => {
-     
+
       groupName[i].map(item => {
         let paragraph = document.createElement('p')
         paragraph.textContent = item.charAt(0).toUpperCase() + item.slice(1);
@@ -70,7 +73,7 @@ fromAPI(listAllDogURL)
           containImage[i].appendChild(img);
         });
     };
-   
+
     function isGroupName(i) {
       return groupName.push(allDogName.reduce((acc, cur) => {
         cur.charAt(0) === alphabet[i] ? acc.push(cur) : "";
@@ -114,7 +117,7 @@ fromAPI(listAllDogURL)
         });
     });
 
-    
+
   });
 
 
