@@ -8,26 +8,27 @@ fromAPI(listAllDogURL)
     const allDogName = [];
     const alphabet = [];
     const groupName = [];
+   
     Object.keys(data.message).map(item => {
 
       allDogName.push(item)
       !alphabet.includes(item.charAt(0)) ? alphabet.push(item.charAt(0)) : '';
     });
-    const createDOM = counter => {
-      counter === undefined ? counter = 3 : '';
+    const createDOM = (num = 3) => {
+       let counter = num
       alphabet.map((item, index) => {
 
-        if (index % 3 === 0) {
+        if (index % num === 0) {
           let divNodeRow1 = document.createElement('div');
           divNodeRow1.className = 'row alphabet';
           document.getElementById('listAlphabet').appendChild(divNodeRow1)
-          index > 0 && index % 3 === 0 ? counter++ : "";
+          index > 0 && index % num === 0 ? counter++ : "";
         }
 
         let divNodeCol1 = document.createElement('div');
         divNodeCol1.className = 'col border pl-4';
         divNodeCol1.textContent = item.charAt(0).toUpperCase() + item.slice(1);
-        document.getElementsByClassName('alphabet')[counter - 3].appendChild(divNodeCol1)
+        document.getElementsByClassName('alphabet')[counter - num].appendChild(divNodeCol1)
 
         let divNodeRow2 = document.createElement('div');
         divNodeRow2.className = 'row containNameImage ';
@@ -51,7 +52,7 @@ fromAPI(listAllDogURL)
 
       groupName[i].map(item => {
         let paragraph = document.createElement('p')
-        paragraph.textContent = item.charAt(0).toUpperCase() + item.slice(1);
+        paragraph.textContent = item.replace(/^./,x => x.toUpperCase()) //item.charAt(0).toUpperCase() + item.slice(1);
         paragraph.className = 'paragraph'
         containName[i].appendChild(paragraph);
       })
@@ -65,25 +66,20 @@ fromAPI(listAllDogURL)
 
       fetchPromise.then(response => response.json())
         .then(dataImage => {
-
+            
           let img = document.createElement('img');
           img.src = Object.values(dataImage)[0];
-          img.title = Object.values(dataImage)[0].slice(30).split('/')[0];
+          img.title = dataImage.message.split('/')[4];
           img.className = 'img p-0 m-auto img-fluid mh-100 ';
           containImage[i].appendChild(img);
         });
     };
-
-    function isGroupName(i) {
-      return groupName.push(allDogName.reduce((acc, cur) => {
-        cur.charAt(0) === alphabet[i] ? acc.push(cur) : "";
-        return acc;
-      }, []));
-    }
+    const isGroupName = i => groupName.push(allDogName.reduce((acc, cur) => (cur.charAt(0) === alphabet[i] ? acc.push(cur) : false,acc),[]));
+    
     let i = -1;
     while (i++ < alphabet.length - 1) {
 
-      isGroupName(i);
+      isGroupName(i);// được tạo ở hàng 77
       addDogName(i); // thêm tên vào DOM
       getImageRandom(i) //Thêm ảnh vào DOM
     }
@@ -110,14 +106,12 @@ fromAPI(listAllDogURL)
 
       let selectImage = fetch(`https://dog.ceo/api/breed/${$(this).text().toLowerCase()}/images/random`);
       selectImage.then(res => res.json())
-        .then(dataSelectImage => {
+        .then(srcImage => {
 
-          $(this).parent().parent().find('.img').attr('src', Object.values(dataSelectImage)[0]); // thay đổi ảnh mới
-          $(this).parent().parent().find('.img').attr('title', Object.values(dataSelectImage)[0].slice(30).split('/')[0]); // thay đổi title cho image
+          $(this).parent().parent().find('.img').attr('src', Object.values(srcImage)[0]); // thay đổi ảnh mới
+          $(this).parent().parent().find('.img').attr('title', $(this).text().toLowerCase()); // thay đổi title cho image
         });
     });
-
-
   });
 
 
